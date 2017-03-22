@@ -1,0 +1,11 @@
+{
+    "name": "acme/tga",
+    "type": "project",
+    "require": {
+        "slim/slim": "^3.0",
+        "slim/php-view": "^2.2"
+    },
+    "autoload": {
+        "files": ["bootstrap/functions.php"]
+    }
+}

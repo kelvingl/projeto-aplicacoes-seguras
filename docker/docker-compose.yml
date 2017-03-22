@@ -1,0 +1,20 @@
+version: '2'
+services:
+ web:
+  build: .
+  container_name: web
+  ports:
+   - "80:80"
+   - "3306:3306"
+  volumes:
+   - ./../:/www
+  image: phpmyadmin/phpmyadmin
+ phpmyadmin:
+  container_name: phpmyadmin
+  environment:
+   - PMA_ARBITRARY=1
+  restart: always
+  ports:
+   - "81:80"
+  volumes:
+   - /sessions
