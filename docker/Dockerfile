@@ -68,12 +68,17 @@ RUN cp /usr/share/zoneinfo/${TIMEZONE} /etc/localtime && \
     echo "<?php phpinfo(); ?>" > /www/index.php && \
     chown -R apache:apache /www
 
+COPY initial_data.sql /tmp/initial_data.sql
+RUN (nohup mysqld --skip-grant-tables --bind-address 0.0.0.0 --user mysql > /dev/null 2>&1 &) && \
+	mysql -uroot -e \"create database db;\" && \
+	mysql -uroot db < /tmp/initial_data.sql
+	
+
 # Start apache
 RUN echo "#!/bin/sh" > /start.sh && \
     echo "" >> /start.sh && \
 	echo "httpd" >> /start.sh && \
     echo "nohup mysqld --skip-grant-tables --bind-address 0.0.0.0 --user mysql > /dev/null 2>&1 &" >> /start.sh && \
-    echo "sleep 3 && mysql -uroot -e \"create database db;\"" >> /start.sh && \
     echo "tail -f /var/log/apache2/access.log" >> /start.sh && \
     chmod u+x /start.sh
 
@@ -82,9 +87,6 @@ RUN wget -O /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases/
     chmod +x /usr/local/bin/dumb-init
 
 WORKDIR /www
-
-COPY initial_data.sql /tmp/initial_data.sql
-RUN mysql db < /tmp/initial_data.sql
 
 EXPOSE 80
 EXPOSE 3306
