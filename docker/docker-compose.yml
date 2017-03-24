@@ -8,8 +8,8 @@ services:
    - "3306:3306"
   volumes:
    - ./../:/www
-  image: phpmyadmin/phpmyadmin
  phpmyadmin:
+  image: phpmyadmin/phpmyadmin
   container_name: phpmyadmin
   environment:
    - PMA_ARBITRARY=1
