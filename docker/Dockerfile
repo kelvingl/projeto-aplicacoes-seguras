@@ -70,7 +70,8 @@ RUN cp /usr/share/zoneinfo/${TIMEZONE} /etc/localtime && \
 
 COPY initial_data.sql /tmp/initial_data.sql
 RUN (nohup mysqld --skip-grant-tables --bind-address 0.0.0.0 --user mysql > /dev/null 2>&1 &) && \
-	mysql -uroot -e \"create database db;\" && \
+    sleep 3 && \
+	mysql -uroot -e "create database if not exists db;" && \
 	mysql -uroot db < /tmp/initial_data.sql
 	
 
