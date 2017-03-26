@@ -70,8 +70,8 @@ $app->post('/usuarios', function($request, $response, $data) {
     $encodeFunc = $this->encodeData;
     $toSave = array_map($encodeFunc, $toSave);
 
-    $toSave['senha'] - md5(md5($toSave['senha']) . ':' . md5($toSave['login']));
-
+    $toSave['senha'] = md5(md5($toSave['senha']) . ':' . md5($toSave['login']));
+    
     $sql = 'INSERT INTO usuarios (' . implode(', ', array_keys($toSave)) . ') VALUES ("' . implode('", "', array_values($toSave)) . '")';
     $success = $this->db->query($sql);
     $toSave['id'] = mysqli_insert_id($this->db);
