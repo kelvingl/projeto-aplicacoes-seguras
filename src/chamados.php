@@ -26,8 +26,9 @@ $app->get('/chamados/edit/{id}', function($request, $response, $data) {
     if(($role = $this->auth) === null){
         return $response->withRedirect($this->router->pathFor('login'));
     }
+    $where = ($role != 1) ?" AND u.id = " . $_SESSION['usuario_id'] : "";
     $this->renderer->render($response, 'chamados/edit.php', [
-        'chamado' => $this->db->query('SELECT c.*,u.nome AS responsavel  FROM chamados c INNER JOIN usuarios u ON u.id = c.usuario WHERE c.id = '. $data['id'])->fetch_assoc(),
+        'chamado' => $this->db->query('SELECT c.*,u.nome AS responsavel  FROM chamados c INNER JOIN usuarios u ON u.id = c.usuario WHERE c.id = '. $data['id'] . $where)->fetch_assoc(),
         'usuarios' => $this->db->query('SELECT * FROM  usuarios')->fetch_all(MYSQLI_ASSOC),
         'container' => $this,
         'title' => 'Edição do chamado #' . $data['id']
