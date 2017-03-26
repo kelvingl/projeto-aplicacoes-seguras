@@ -23,6 +23,8 @@ $app->put('/grupos/{id}', function($request, $response, $data) {
         }
     }
     $toSave = array_intersect_key($request->getParsedBody(), array_flip(['nome', 'admin']));
+    $encodeFunc = $this->encodeData;
+    $toSave = array_map($encodeFunc, $toSave);
     $sql = 'UPDATE grupos SET';
     foreach ($toSave as $key => $value)
         $sql .= " $key = \"$value\", ";
@@ -40,7 +42,7 @@ $app->delete('/grupos/{id}', function($request, $response, $data) {
             return $response->withRedirect($this->router->pathFor('unauthorized'));
         }
     }
-    $sql = 'DELETE FROM grupos WHERE id = ' . $data['id'];
+    $sql = 'DELETE FROM grupos WHERE id = ' . (int) $data['id'];
     $success = $this->db->query($sql);
     return $response->withJson(['success' => $success], $success ? 200 : 400);
 })->setName('gruposDelete');
@@ -54,6 +56,8 @@ $app->post('/grupos', function($request, $response, $data) {
         }
     }
     $toSave = array_intersect_key($request->getParsedBody(), array_flip(['nome', 'admin']));
+    $encodeFunc = $this->encodeData;
+    $toSave = array_map($encodeFunc, $toSave);
     $sql = 'INSERT INTO grupos (' . implode(', ', array_keys($toSave)) . ') VALUES ("' . implode('", "', array_values($toSave)) . '")';
     $success = $this->db->query($sql);
     $toSave['id'] = mysqli_insert_id($this->db);

@@ -39,9 +39,12 @@ $app->post('/chamados/edit/{id}', function($request, $response, $data) {
     if(($role = $this->auth) === null){
         return $response->withRedirect($this->router->pathFor('login'));
     }
+    $encodeFunc = $this->encodeData;
     $toSave = $request->getParsedBody();
     $sql = "UPDATE chamados SET ";
     foreach ($toSave as $k => $v) {
+        $k = $encodeFunc($k);
+        $v = $encodeFunc($v);
         $sql .= " $k = \"$v\", ";
     }
     $sql = substr($sql, 0, strlen($sql) - 2) . " WHERE id = " . $data['id'];
@@ -66,6 +69,8 @@ $app->post('/chamados/add', function($request, $response, $data) {
         }
     }
     $toSave = $request->getParsedBody();
+    $encodeFunc = $this->encodeData;
+    $toSave = array_map($encodeFunc, $toSave);
     $sql = 'INSERT INTO chamados (' . implode(', ', array_keys($toSave)) . ') VALUES ("' . implode('", "', array_values($toSave)) . '")';
     $success = $this->db->query($sql);
     return $response->withRedirect($this->router->pathFor('chamadosEditGet', ['id' => mysqli_insert_id($this->db)]));

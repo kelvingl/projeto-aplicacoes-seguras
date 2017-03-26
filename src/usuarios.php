@@ -24,6 +24,8 @@ $app->put('/usuarios/{id}', function($request, $response, $data) {
         }
     }
     $toSave = array_intersect_key($request->getParsedBody(), array_flip(['nome', 'login', 'senha', 'grupo']));
+    $encodeFunc = $this->encodeData;
+    $toSave = array_map($encodeFunc, $toSave);
     if(empty($toSave['senha'])) unset($toSave['senha']);
     $sql = 'UPDATE usuarios SET';
     foreach ($toSave as $key => $value)
@@ -42,7 +44,7 @@ $app->delete('/usuarios/{id}', function($request, $response, $data) {
             return $response->withRedirect($this->router->pathFor('unauthorized'));
         }
     }
-    $sql = 'DELETE FROM usuarios WHERE id = ' . $data['id'];
+    $sql = 'DELETE FROM usuarios WHERE id = ' . (int) $data['id'];
     $success = $this->db->query($sql);
     return $response->withJson(['success' => $success], $success ? 200 : 400);
 })->setName('usuariosDelete');
@@ -56,6 +58,8 @@ $app->post('/usuarios', function($request, $response, $data) {
         }
     }
     $toSave = array_intersect_key($request->getParsedBody(), array_flip(['nome', 'login', 'senha', 'grupo']));
+    $encodeFunc = $this->encodeData;
+    $toSave = array_map($encodeFunc, $toSave);
     $sql = 'INSERT INTO usuarios (' . implode(', ', array_keys($toSave)) . ') VALUES ("' . implode('", "', array_values($toSave)) . '")';
     $success = $this->db->query($sql);
     $toSave['id'] = mysqli_insert_id($this->db);
@@ -74,6 +78,8 @@ $app->post('/login', function($request, $response, $data) {
         'login' => '',
         'senha' => ''
     ], $request->getParsedBody());
+    $encodeFunc = $this->encodeData;
+    $data = array_map($encodeFunc, $data);
     $sql = "SELECT u.id, g.admin FROM usuarios u INNER JOIN grupos g ON g.id = u.grupo WHERE u.login = \"" . $data['login'] . "\" AND u.senha = \"" . $data['senha'] . "\"";
     $result = $this->db->query($sql);
     if ($result->num_rows == 0) {

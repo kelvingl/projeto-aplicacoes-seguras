@@ -20,6 +20,14 @@ $container['auth'] = function()
     return (int) $_SESSION['grupo_admin'];
 };
 
+$container["encodeData"] = function($container)
+{
+	return function ($str) use ($container)
+	{
+		return $container->db->real_escape_string(htmlspecialchars($str));
+	};
+};
+
 $app->get('/', function ($request, $response) {return $response->withRedirect($this->router->pathFor('indexGet'));});
 
 require "../src/chamados.php";
