@@ -8,6 +8,7 @@
 <div id="dialog-form" title="Adicionar/Editar usuario">
     <form id="form">
         <fieldset><input type="hidden" id="_target" disabled="disabled" />
+            <input type="hidden" id="login" name="login" value="" />
             <label for="name">Nome</label><br>
             <input type="text" name="nome" id="nome" value="Exemplo" class="text ui-widget-content ui-corner-all">
             <br><br>

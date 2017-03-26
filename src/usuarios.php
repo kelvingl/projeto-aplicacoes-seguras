@@ -23,7 +23,7 @@ $app->put('/usuarios/{id}', function($request, $response, $data) {
             return $response->withRedirect($this->router->pathFor('unauthorized'));
         }
     }
-    $toSave = array_intersect_key($request->getParsedBody(), array_flip(['nome', 'senha', 'grupo']));
+    $toSave = array_intersect_key($request->getParsedBody(), array_flip(['nome', 'senha', 'login', 'grupo']));
     $encodeFunc = $this->encodeData;
     $toSave = array_map($encodeFunc, $toSave);
     if(empty($toSave['senha'])) {
