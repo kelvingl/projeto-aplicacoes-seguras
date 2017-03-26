@@ -23,11 +23,15 @@ $app->put('/usuarios/{id}', function($request, $response, $data) {
             return $response->withRedirect($this->router->pathFor('unauthorized'));
         }
     }
+    $dadosAtual = $this->db->query("SELECT * FROM usuarios WHERE id = " . $data["id"])->fetch_assoc();
     $toSave = array_intersect_key($request->getParsedBody(), array_flip(['nome', 'senha', 'login', 'grupo']));
     $encodeFunc = $this->encodeData;
     $toSave = array_map($encodeFunc, $toSave);
     if(empty($toSave['senha'])) {
         unset($toSave['senha']);
+        if($dadosAtual['login'] != $toSave['login']) {
+             return $response->withJson(['success' => false, "message" => "Para trocar o login, preencha a senha!"], 200);
+        }
     } else {
         $toSave['senha'] = md5(md5($toSave['senha']) . ':' . md5($toSave['login']));
     }

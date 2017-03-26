@@ -68,7 +68,13 @@ AddEdit = {
             url: AddEdit._target.val(),
             type: AddEdit._target.attr('data-method'),
             data: AddEdit.allFields.serialize(),
+            dataType: "json",
             success: function(data) {
+                if (!data.success) {
+                    if(data.message) {
+                        alert(data.message);
+                    }
+                }
                 window.location.reload();
             }
         });

@@ -53,7 +53,7 @@ $app->post('/chamados/edit/{id}', function($request, $response, $data) {
     }
     $sql = substr($sql, 0, strlen($sql) - 2) . " WHERE id = " . $data['id'];
     $this->db->query($sql);
-    return $response->withRedirect($this->router->pathFor('chamadosEditGet', ['id' => $data['id']]));
+    return $response->withRedirect($this->router->pathFor('chamadosGet'));
  })->setName('chamadosEditPost');
 
 $app->get('/chamados/delete/{id}', function($request, $response, $data) {
@@ -77,7 +77,7 @@ $app->post('/chamados/add', function($request, $response, $data) {
     $toSave = array_map($encodeFunc, $toSave);
     $sql = 'INSERT INTO chamados (' . implode(', ', array_keys($toSave)) . ') VALUES ("' . implode('", "', array_values($toSave)) . '")';
     $success = $this->db->query($sql);
-    return $response->withRedirect($this->router->pathFor('chamadosEditGet', ['id' => mysqli_insert_id($this->db)]));
+    return $response->withRedirect($this->router->pathFor('chamadosGet'));
 })->setName('chamadosAddPost');
 
 $app->get('/home/index', function($request, $response) {

@@ -21,7 +21,7 @@
                         <td><?php echo $chamado['usuario_nome']; ?></td>
                         <td><?php echo $chamado['setor']; ?></td>
                         <td>
-                            <a class="btn-editar" target="_blank" href="<?php echo  $container->router->pathFor('chamadosEditGet', ['id' => $chamado['id']]); ?>">Editar</a>|
+                            <a class="btn-editar" href="<?php echo  $container->router->pathFor('chamadosEditGet', ['id' => $chamado['id']]); ?>">Editar</a>|
                             <a class="btn-excluir" href="<?php echo  $container->router->pathFor('chamadosDeleteGet', ['id' => $chamado['id']]); ?>">Excluir</a>
                         </td>
                     </tr>
