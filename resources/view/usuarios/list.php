@@ -11,9 +11,6 @@
             <label for="name">Nome</label><br>
             <input type="text" name="nome" id="nome" value="Exemplo" class="text ui-widget-content ui-corner-all">
             <br><br>
-            <label for="login">Login</label><br>
-            <input type="text" name="login" id="login" value="" class="text ui-widget-content ui-corner-all">
-            <br><br>
             <label for="senha">Senha</label><br>
             <input type="password" name="senha" id="senha" value="" class="text ui-widget-content ui-corner-all">
             <br><br>

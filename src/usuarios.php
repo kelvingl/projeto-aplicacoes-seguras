@@ -23,10 +23,15 @@ $app->put('/usuarios/{id}', function($request, $response, $data) {
             return $response->withRedirect($this->router->pathFor('unauthorized'));
         }
     }
-    $toSave = array_intersect_key($request->getParsedBody(), array_flip(['nome', 'login', 'senha', 'grupo']));
+    $toSave = array_intersect_key($request->getParsedBody(), array_flip(['nome', 'senha', 'grupo']));
     $encodeFunc = $this->encodeData;
     $toSave = array_map($encodeFunc, $toSave);
-    if(empty($toSave['senha'])) unset($toSave['senha']);
+    if(empty($toSave['senha'])) {
+        unset($toSave['senha']);
+    } else {
+        $toSave['senha'] = md5(md5($toSave['senha']) . ':' . md5($toSave['login']));
+    }
+
     $sql = 'UPDATE usuarios SET';
     foreach ($toSave as $key => $value)
         $sql .= " $key = \"$value\", ";
@@ -60,6 +65,9 @@ $app->post('/usuarios', function($request, $response, $data) {
     $toSave = array_intersect_key($request->getParsedBody(), array_flip(['nome', 'login', 'senha', 'grupo']));
     $encodeFunc = $this->encodeData;
     $toSave = array_map($encodeFunc, $toSave);
+
+    $toSave['senha'] - md5(md5($toSave['senha']) . ':' . md5($toSave['login']));
+
     $sql = 'INSERT INTO usuarios (' . implode(', ', array_keys($toSave)) . ') VALUES ("' . implode('", "', array_values($toSave)) . '")';
     $success = $this->db->query($sql);
     $toSave['id'] = mysqli_insert_id($this->db);
@@ -80,7 +88,8 @@ $app->post('/login', function($request, $response, $data) {
     ], $request->getParsedBody());
     $encodeFunc = $this->encodeData;
     $data = array_map($encodeFunc, $data);
-    $sql = "SELECT u.id, g.admin FROM usuarios u INNER JOIN grupos g ON g.id = u.grupo WHERE u.login = \"" . $data['login'] . "\" AND u.senha = \"" . $data['senha'] . "\"";
+    $senha = md5(md5($data['senha']) . ':' . md5($data['login']));
+    $sql = "SELECT u.id, g.admin FROM usuarios u INNER JOIN grupos g ON g.id = u.grupo WHERE u.login = \"" . $data['login'] . "\" AND u.senha = \"" . $senha . "\"";
     $result = $this->db->query($sql);
     if ($result->num_rows == 0) {
         return $response->withRedirect($this->router->pathFor('login', [], ['error' => 1]));
